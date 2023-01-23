@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta name="viewport"
+    content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+<html lang="zh-cn">
+
+<head>
+    <title>请输入目的地</title>
+    <link type="text/css" rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <p>专心驾驶 守护安全</p>
+        <form action="/index/type_in_dest/" method="POST" class="form">
+            {% csrf_token %}
+            <p><label></label><input name="input_str_dest" placeholder="目的地"></p>
+            <p><label></label><input name="input_str_phone_num" placeholder="客户手机号"></p>
+            <button type="submit">提交</button>
+        </form>
+    </div>
+</body>
+
+</html>

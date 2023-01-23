@@ -1,0 +1,57 @@
+html,
+body {
+    margin: 0;
+    font-family: "PingFang SC", "Microsoft Yahei", sans-serif;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url("https://starry-lixu.oss-cn-hangzhou.aliyuncs.com/202209141908599.jpg") fixed no-repeat;
+    background-size: cover;
+}
+
+.form {
+    width: 240px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    z-index: 100;
+    background: inherit;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.form h2 {
+    font-size: 18px;
+    font-weight: 400;
+    color: #3d5245;
+}
+
+.form input,
+.form button {
+    margin: 6px 0;
+    height: 36px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 0 14px;
+    color: #3d5245;
+}
+
+/*footer*/
+.cpr {
+    position: absolute;
+    bottom: .2rem;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    font-size: .23rem;
+    text-align: center;
+}

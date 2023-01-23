@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta name="viewport"
+	content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+<html lang="zh-cn">
+
+<head>
+	<title>外卖箱交互平台</title>
+	<link type="text/css" rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+	<div class="container">
+		<p>如果您没有账号，请联系外卖箱销售部门提供。</p>
+		<form action="login_status/" method="POST" class="form">
+			{% csrf_token %}
+			<p><label></label><input name="user" placeholder="用户名"></p>
+			<p><label></label><input name="pwd" placeholder="密码"></p>
+			<!-- <input type="submit" value="登录"> -->
+			<button type="submit">登录</button>
+		</form>
+	</div>
+	<footer class="cpr">
+		<a href="http://kimjinzhan.fit" target="_blank">多功能模块化新型外卖箱项目团队</a>
+	</footer>
+</body>
+
+</html>
