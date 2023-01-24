@@ -14,15 +14,17 @@ sms_time_limit = 300
 def gps_get():
     # 创建gps串口的句柄
     ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.5)
-    count = 0
+    count = 1
     while (True):
         try:
-            try:
-                if count == 100:
-                    return -1
+            try:  # 这里如果一直没有GPS数据就直接发短信
+                if count == 200:
+                    location = get_location_x_y(dest)
+                    return location
                 # 将读取到的字节码转化成字符串（去掉前2位的无用字符）
                 line = str(str(ser.readline())[2:])
-                print("Loading GPS")
+                count += 1
+                print("Loading GPS"+" " + str(count))
             except serial.SerialException:
                 print("GPS初始化中")
                 count += 1
@@ -87,48 +89,44 @@ conn_obj = pymysql.connect(
 )
 
 
-def main():
-    while 1:
-        # 获取数据的循环
-        cursor1 = conn_obj.cursor()
-        time.sleep(5)
-        sql1 = "select * from dest where status = 0"
-        print("Waiting data from demo")
-        conn_obj.ping(reconnect=True)
-        data_exist_flag = cursor1.execute(sql1)
-        now = cursor1.fetchone()
-        if data_exist_flag == 1:
-            id = now[0]
-            dest = now[1]
-            phone_num = str("+86" + str(now[3]))
-        else:
-            continue
-        while True:
-            # 获取到数据，进入GPS循环
-            time.sleep(15)
-            parameters = {
-                'key': key,
-                'origin': from_gps_get_now_location(),
-                'destination': get_location_x_y(dest),
-            }
-            url = "https://restapi.amap.com/v4/direction/bicycling?parameters"
-            back = requests.get(url, params=parameters)
-            text = back.text
-            data = json.loads(text)
-            time_to_arrive = int(data["data"]["paths"][0]["duration"])
-            if time_to_arrive < sms_time_limit:
-                sms_ret = sample.sms(phone_num)
-                status = sms_ret["SendStatusSet"][0]["Code"]
-                if status == "Ok":
-                    # 写回数据库
-                    cursor2 = conn_obj.cursor()
-                    sql2 = f"UPDATE `demo`.`dest` SET `status` = '1' WHERE (`id` = '{id}')"
-                    connect.ping(reconnect=True)
-                    res = cursor2.execute(sql2)
-                    break
-                else:
-                    # 提示骑手
-                    break
-
-
-main()
+while 1:
+    # 获取数据的循环
+    cursor1 = conn_obj.cursor()
+    time.sleep(5)
+    sql1 = "select * from dest where status = 0"
+    print("Waiting data from demo")
+    conn_obj.ping(reconnect=True)
+    data_exist_flag = cursor1.execute(sql1)
+    now = cursor1.fetchone()
+    if data_exist_flag == 1:
+        id = now[0]
+        dest = now[1]
+        phone_num = str("+86" + str(now[3]))
+    else:
+        continue
+    while True:
+        # 获取到数据，进入GPS循环
+        time.sleep(15)
+        parameters = {
+            'key': key,
+            'origin': from_gps_get_now_location(),
+            'destination': get_location_x_y(dest),
+        }
+        url = "https://restapi.amap.com/v4/direction/bicycling?parameters"
+        back = requests.get(url, params=parameters)
+        text = back.text
+        data = json.loads(text)
+        time_to_arrive = int(data["data"]["paths"][0]["duration"])
+        if time_to_arrive < sms_time_limit:
+            sms_ret = sample.sms(phone_num)
+            status = sms_ret["SendStatusSet"][0]["Code"]
+            if status == "Ok":
+                # 写回数据库
+                cursor2 = conn_obj.cursor()
+                sql2 = f"UPDATE `demo`.`dest` SET `status` = '1' WHERE (`id` = '{id}')"
+                conn_obj.ping(reconnect=True)
+                res = cursor2.execute(sql2)
+                break
+            else:
+                # 提示骑手
+                break
